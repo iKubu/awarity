@@ -27,41 +27,46 @@ def startLinkedInBrowser():
         response = browser.submit()
         return browser
 
-"""
-authentication = linkedin.LinkedInAuthentication(API_KEY, API_SECRET, RETURN_URL, linkedin.PERMISSIONS.enums.values())
-
-AUTH_ONLY=False
-
-if (AUTH_ONLY):
-    print authentication.permissions
-    print authentication.authorization_url  
-    raw_input("Open this link in browser...");
-    quit();
-
-CODE = 'AQRnjvb4w8ze1T6C31hM9dEBCQIqMA3AnLP6v_9TwwAY0LkAyLmAakglWJOJA2n7KAFl1n7RUrGOJJDwHcg8tjSMsxXNim5PkyzjdMwhem8SOAAJLBg&state=ffbef8dbec56a2bd37bcc88e0b931b2d'
-
-authentication.authorization_code = CODE;
-access_token = authentication.get_access_token();
-"""
-
-#print application.get_profile()
-#print application.get_connections()
 #print application.search_profile(selectors=[{'people':['first-name', 'last-name']}],params={'keywords':'nolan van heerden'})
 
-application = authenticate()
-connections = application.get_connections()
-browser = startLinkedInBrowser()
+def iterateThroughConnections():
+        application = authenticate()
+        connections = application.get_connections()
+        browser = startLinkedInBrowser()
 
-for connection in connections[u'values']:
-        try:
-                print ">>" + connection[u'firstName'] + " " + connection[u'lastName'] + " " + connection[u'id'] + "\n" + connection[u'siteStandardProfileRequest'][u'url']
-                URL = connection[u'siteStandardProfileRequest'][u'url']
-                # - do not overburder people with views!! 
-                #browser.open(URL)
-        except:
-                print '=== No Standard Profile ==='
-                print connection.keys()
+        for connection in connections[u'values']:
+                try:
+                        print ">>" + connection[u'firstName'] + \
+                              " " + connection[u'lastName'] + \
+                              " " + connection[u'id'] + "\n" + \
+                              connection[u'siteStandardProfileRequest'][u'url']
 
-        #random time delay
-        time.sleep(random.randint(10,100))
+                        URL = connection[u'siteStandardProfileRequest'][u'url']
 
+                        # - do not overburder people with views!! 
+                        #browser.open(URL)
+                except:
+                        print '=== No Standard Profile ==='
+                        print connection.keys()
+
+                #random time delay
+                time.sleep(random.randint(10,100))
+
+def showConnectionStats(connections):
+        print "Total Number of Connections: " + str(connections[u'_total'])
+        rand = random.randint(0, connections[u'_total']-1)
+        print "Random Connection Names: " + connections[u'values'][rand][u'firstName'] + " " + \
+                                           connections[u'values'][rand][u'lastName']
+
+def main():
+        print '[Authenticating application]'
+        application = authenticate()
+
+        print '[Retrieve connections]'
+        connections = application.get_connections()
+
+        print '[Show statistics - demo use]'
+        showConnectionStats(connections);
+
+if __name__ == "__main__":
+        main()
